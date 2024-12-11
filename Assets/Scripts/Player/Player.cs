@@ -1,8 +1,15 @@
 using UnityEngine;
 
+[RequireComponent (typeof(PlayerHealth))]
 public class Player : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private PlayerHealth playerHealth;
+
+    private void Awake()
+    {
+        playerHealth = GetComponent<PlayerHealth> ();
+    }
+
     void Start()
     {
         
@@ -13,4 +20,11 @@ public class Player : MonoBehaviour
     {
         
     }
+
+
+    public void TakeDamage(int damage)
+    {
+        playerHealth.TakeDamage(damage);
+    }
+
 }

@@ -6,11 +6,13 @@ public class EnemyMovement : MonoBehaviour
     private Player player;
     [Header( " Movement ")]
     [SerializeField] private float moveSpeed = 4f;
-    private bool canMove = true;
+    private bool canMove;
     void Update()
     {
-        if(player != null)
+        if(player != null && canMove)
+        {
             FollowPlayer();
+        }
     }
 
     private void FollowPlayer()

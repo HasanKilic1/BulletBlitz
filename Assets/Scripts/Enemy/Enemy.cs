@@ -69,6 +69,7 @@ public class Enemy : MonoBehaviour
     private void Attack()
     {
         attackTimer = 0f;
+        player.TakeDamage(damage);
     }
 
     private void PassAway()
@@ -88,6 +89,7 @@ public class Enemy : MonoBehaviour
         spriteRenderer.enabled = true;
         spawnIndicator.enabled = false;
         hasSpawned = true;
+
         enemyMovement.SetMove(true);
     }
 

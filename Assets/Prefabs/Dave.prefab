@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 8247042600628108255}
   - component: {fileID: 6559590359849363191}
   - component: {fileID: 9183836511029881812}
+  - component: {fileID: 830423884362900621}
   m_Layer: 0
   m_Name: Dave
   m_TagString: Untagged
@@ -260,3 +261,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rb: {fileID: 4591972244959102922}
   moveSpeed: 500
+--- !u!114 &830423884362900621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7500813043782591074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f2333ff685b15d4eba64844d9d89aec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
