@@ -1,10 +1,12 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     private Player player;
     private EnemyMovement enemyMovement;
+
     [Header("Spawn Sequence Related")]
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private SpriteRenderer spawnIndicator;
@@ -20,6 +22,11 @@ public class Enemy : MonoBehaviour
     [Space]
     [SerializeField] GameObject explodeVfx;
 
+    [Header("Health")]
+    [SerializeField] private int maxHealth;
+    [SerializeField] private TextMeshPro healthText;
+
+    private int health;
     private void Awake()
     {
         enemyMovement = GetComponent<EnemyMovement>();
@@ -27,6 +34,9 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        health = maxHealth;
+        healthText.text = health.ToString();
+
         player = FindFirstObjectByType<Player>();
         if (player == null)
         {
@@ -70,6 +80,17 @@ public class Enemy : MonoBehaviour
     {
         attackTimer = 0f;
         player.TakeDamage(damage);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        health = Mathf.Max(health, 0);
+        if(health <= 0)
+        {
+            PassAway();
+        }
+        healthText.text = health.ToString();
     }
 
     private void PassAway()
