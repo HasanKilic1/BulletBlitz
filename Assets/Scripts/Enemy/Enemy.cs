@@ -1,9 +1,13 @@
+using MoreMountains.Feedbacks;
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public static event Action<int> OnDamageTaken;
+
     private Player player;
     private EnemyMovement enemyMovement;
 
@@ -25,11 +29,14 @@ public class Enemy : MonoBehaviour
     [Header("Health")]
     [SerializeField] private int maxHealth;
     [SerializeField] private TextMeshPro healthText;
+    [SerializeField] MMF_Player damageFeedbacks;
 
     private int health;
+    private CapsuleCollider2D coll;
     private void Awake()
     {
         enemyMovement = GetComponent<EnemyMovement>();
+        coll = GetComponent<CapsuleCollider2D>();
     }
 
     void Start()
@@ -84,13 +91,18 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        damageFeedbacks.PlayFeedbacks();
+
         health -= damage;
         health = Mathf.Max(health, 0);
-        if(health <= 0)
+        healthText.text = health.ToString();
+
+        OnDamageTaken?.Invoke(damage);
+
+        if (health <= 0)
         {
             PassAway();
         }
-        healthText.text = health.ToString();
     }
 
     private void PassAway()
@@ -101,12 +113,13 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator SpawnSequence()
     {
-
+        coll.enabled = false;
         spriteRenderer.enabled = false;
         spawnIndicator.enabled = true;
 
         yield return new WaitForSeconds(2f);
-
+        
+        coll.enabled = true;
         spriteRenderer.enabled = true;
         spawnIndicator.enabled = false;
         hasSpawned = true;

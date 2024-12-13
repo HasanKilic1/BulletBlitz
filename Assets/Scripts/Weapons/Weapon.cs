@@ -15,15 +15,15 @@ public class Weapon : MonoBehaviour
     [Header(" Attack ")]
     [SerializeField] private int damage;
     [SerializeField] private Transform hitDetectionPos;
+    [SerializeField] private BoxCollider2D hitCollider;
     [SerializeField] private float hitDetectionRadius;
     [SerializeField] private float attackInterval;
-    private bool isChecking;
     private float attackTimer;
     private List<Enemy> damagedEnemies = new();
 
     [SerializeField] private float range;
     [SerializeField] LayerMask enemyLayer;
-    [SerializeField] private float aimLerp = 10f;
+
     void Start()
     {
         state = EState.Idle;
@@ -35,7 +35,8 @@ public class Weapon : MonoBehaviour
         switch (state)
         {
             case EState.Idle:
-                AutoAim();
+                AutoAim(out bool enemyFound);
+                animator.speed = enemyFound ? 0f : 1f;
                 break;
 
             case EState.Attack:
@@ -57,28 +58,22 @@ public class Weapon : MonoBehaviour
     }
     private void Attacking()
     {
+        animator.speed = 1f;
         CheckAndGiveDamageNearbyEnemies();
     }
-
-    private void StartAttackChecking()
-    {
-        isChecking = true;
-    }
-
     //Animator
     private void StopAttack()
     {
         state = EState.Idle;
         damagedEnemies.Clear();
-        Debug.Log("Attack stopped");
-        isChecking = false;
     }
 
     private void CheckAndGiveDamageNearbyEnemies()
     {
         IncreaseTimer();
-        if (!isChecking) return;
-        Collider2D[] enemies = Physics2D.OverlapCircleAll(hitDetectionPos.position, hitDetectionRadius, enemyLayer);
+        Collider2D[] enemies = Physics2D.OverlapBoxAll(hitDetectionPos.position, hitCollider.bounds.size,
+                                                       hitDetectionPos.localEulerAngles.z,
+                                                       enemyLayer);
 
         for (int i = 0; i < enemies.Length; i++)
         {
@@ -93,17 +88,17 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    private void AutoAim()
+    private void AutoAim(out bool enemyFound)
     {
         Transform closestEnemy = GetClosestEnemy();
 
         if (closestEnemy != null)
         {
+            Vector2 targetUpVector = (closestEnemy.position - transform.position).normalized;
+            transform.up = targetUpVector;
             ManageAttack();
-            Vector2 diff = (closestEnemy.position - transform.position).normalized;
-            transform.up = Vector2.Lerp(transform.up, diff, Time.deltaTime * aimLerp);
         }
-
+        enemyFound = closestEnemy != null;
     }
 
     private void ManageAttack()
